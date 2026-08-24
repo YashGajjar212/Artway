@@ -1,17 +1,20 @@
 using Artway.Application.Interfaces.Customers;
 using Artway.Application.Services.Customers;
 using Artway.Database.DBContext;
+using Artway.Presentation.ExceptionHandlers;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
 
 // Add services to the container.
-
 builder.Services.AddTransient<ICustomerServices, CustomerServices>();
 
-builder.Services.AddDbContext<ArtwayContext>(options => 
+builder.Services.AddDbContext<ArtwayContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ArtwayDatabase")));
 
 builder.Services.AddControllers();
@@ -29,11 +32,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// Enable exception handler middleware
+app.UseExceptionHandler();
 
+app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
