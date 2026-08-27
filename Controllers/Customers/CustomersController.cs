@@ -9,7 +9,7 @@ namespace Artway.Controllers.Customers
     [Route("api/[controller]")]
     public class CustomersController : ControllerBase
     {
-        public readonly ICustomerServices _customerServices;
+        private readonly ICustomerServices _customerServices;
 
         public CustomersController(ICustomerServices customerServices)
         {
@@ -21,8 +21,8 @@ namespace Artway.Controllers.Customers
         {
             var result = await _customerServices.GetAllCustomers();
 
-            if (!result.Any())
-                throw new NotFoundException("No customers were found in the system.");
+            if (result == null)
+                return Ok(new List<Customer>());
 
             return Ok(result);
         }
@@ -34,30 +34,39 @@ namespace Artway.Controllers.Customers
             var result = await _customerServices.GetCustomerById(id);
 
             if (result == null)
-                throw new NotFoundException($"No customer was found with Id: {id}");
+                throw new NotFoundException(ExceptionMessages.CustomerNotFoundwithId(id));
 
             return Ok(result);
         }
 
         [HttpPost]
-        [Route("add")]
-        public async Task AddCustomer([FromBody]Customer customer)
+        // [Route("add")] This is not needed as per REST design. 
+        public async Task<ActionResult<Customer>> AddCustomer([FromBody]Customer customer)
         {
-            await _customerServices.AddCustomer(customer);
+            var newCustomer = await _customerServices.AddCustomer(customer);
+
+            if (newCustomer == null)
+            {
+                throw new Exception(ExceptionMessages.CustomerNotFound); // Add a new exception
+            }
+
+            return CreatedAtAction(nameof(GetCustomerById), new { id = newCustomer.CustomerId }, newCustomer);
         }
 
         [HttpPut]
-        [Route("update")]
+        //[Route("update")] Onve again this is not needed as the URL will become api/customers/update and this is not the standard
         public async Task<ActionResult<Customer>> UpdateCustomer([FromBody]Customer customer)
         {
-            return await _customerServices.UpdateCustomer(customer);
+            var updatedCustomer = await _customerServices.UpdateCustomer(customer);
+
+            return Ok(updatedCustomer);
         }
 
-        [HttpDelete]
-        [Route("delete")]
-        public async Task DeleteCustomer(int id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCustomer(int id)
         {
             await _customerServices.DeleteCustomer(id);
+            return NoContent();
         }
     }
 }

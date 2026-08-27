@@ -2,7 +2,7 @@
 
 namespace Artway.Application.Interfaces.Customers
 {
-    public interface ICustomerServices
+    public interface ICustomerRepository
     {
         public Task<List<Customer>> GetAllCustomers();
 

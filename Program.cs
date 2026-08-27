@@ -1,6 +1,7 @@
 using Artway.Application.Interfaces.Customers;
 using Artway.Application.Services.Customers;
 using Artway.Database.DBContext;
+using Artway.Infrastructure.Repositories.Customers;
 using Artway.Presentation.ExceptionHandlers;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,7 +13,8 @@ builder.Services.AddProblemDetails();
 builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
 
 // Add services to the container.
-builder.Services.AddTransient<ICustomerServices, CustomerServices>();
+builder.Services.AddScoped<ICustomerServices, CustomerServices>();
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 
 builder.Services.AddDbContext<ArtwayContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ArtwayDatabase")));
