@@ -3,7 +3,7 @@ using Artway.Models;
 using Microsoft.AspNetCore.Mvc;
 using Artway.Application.Exceptions;
 
-namespace Artway.Controllers.Customers
+namespace Artway.Presentation.Controllers.Customers
 {
     [ApiController]
     [Route("api/[controller]")]

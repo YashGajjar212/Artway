@@ -10,13 +10,11 @@ namespace Artway.Models
         [Required]
         public int CustomerId { get; set; }
 
-        [Required]
         [MaxLength(100)]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
-        [Required]
         [Phone]
-        public string Phone { get; set; }
+        public string? Phone { get; set; }
 
         [Required]
         [EmailAddress]
@@ -32,7 +30,7 @@ namespace Artway.Models
         public string PasswordHash { get; set; }
 
         [Required]
-        public int UserRole { get; set; }
+        public int UserRole { get; set; } = 1;
 
         [Required]
         public DateTime Creation_Date { get; set; }
@@ -40,7 +38,6 @@ namespace Artway.Models
         [Required]
         public DateTime Last_Updated { get; set; }
 
-        [Required]
-        public DateTime Last_Login { get; set; }
+        public DateTime? Last_Login { get; set; }
     }
 }
