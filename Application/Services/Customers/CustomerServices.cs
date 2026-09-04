@@ -1,46 +1,67 @@
-﻿using Artway.Application.Interfaces.Customers;
-using Artway.Database.DBContext;
+﻿using Artway.Application.Exceptions;
+using Artway.Application.Interfaces.Customers;
 using Artway.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Artway.Application.Services.Customers
 {
     public class CustomerServices : ICustomerServices
     {
-        public readonly ArtwayContext _context;
-        public CustomerServices(ArtwayContext context)
+        private readonly ICustomerRepository _customerRepository;
+        public CustomerServices(ICustomerRepository customerRepository)
         {
-            _context = context;
+            _customerRepository = customerRepository;
         }
 
         public async Task<List<Customer>> GetAllCustomers()
         {
-            return await _context.Customers.ToListAsync();
+            return await _customerRepository.GetAllCustomers();
         }
 
         public async Task<Customer> GetCustomerById(int id)
         {
-            return await _context.Customers.FirstOrDefaultAsync(x => x.CustomerId == id);
+            return await _customerRepository.GetCustomerById(id);
         }
 
-        public async Task AddCustomer(Customer customer)
+        public async Task<Customer> AddCustomer(Customer customer)
         {
-            _context.Customers.Add(customer);
-            await _context.SaveChangesAsync();
+            var newCustomer = await _customerRepository.AddCustomer(customer);
+
+            if (newCustomer == null)
+                throw new Exception(ExceptionMessages.CustomerInsertException);
+
+            return newCustomer;
         }
 
         public async Task<Customer> UpdateCustomer(Customer customer)
         {
-            _context.Customers.Update(customer);
-            await _context.SaveChangesAsync();
-            return customer;
+            var existingCustomer = await _customerRepository.GetCustomerById(customer.CustomerId);
+
+            if (existingCustomer == null)
+            {
+                throw new NotFoundException($"Customer with ID {customer.CustomerId} was not found.");
+            }
+
+            existingCustomer.Name = customer.Name;
+            existingCustomer.Phone = customer.Phone;
+            existingCustomer.Email = customer.Email;
+            existingCustomer.PasswordHash = customer.PasswordHash;
+            existingCustomer.UserRole = customer.UserRole;
+            existingCustomer.Creation_Date = customer.Creation_Date;
+            existingCustomer.Last_Updated = DateTime.UtcNow;
+            existingCustomer.Last_Login = customer.Last_Login;
+
+            await _customerRepository.UpdateCustomer(existingCustomer);
+            return existingCustomer;
         }
 
         public async Task DeleteCustomer(int id)
         {
-            var customer = await GetCustomerById(id);
-            _context.Customers.Remove(customer);
-            _context.SaveChangesAsync();
+            var customer = await _customerRepository.GetCustomerById(id);
+
+            if (customer == null)
+                throw new NotFoundException($"Customer with ID {id} was not found.");
+
+            await _customerRepository.DeleteCustomer(id);
         }
     }
 }
