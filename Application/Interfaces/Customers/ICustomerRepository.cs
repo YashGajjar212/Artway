@@ -8,6 +8,8 @@ namespace Artway.Application.Interfaces.Customers
 
         public Task<Customer> GetCustomerById(int id);
 
+        public Task<Customer> GetCustomerByEmail(string email);
+
         public Task<Customer> AddCustomer(Customer customer);
 
         public Task<Customer> UpdateCustomer(Customer customer);

@@ -23,6 +23,11 @@ namespace Artway.Infrastructure.Repositories.Customers
             return await _context.Customers.FindAsync(id);
         }
 
+        public async Task<Customer> GetCustomerByEmail(string email)
+        {
+            return await _context.Customers.FirstOrDefaultAsync(x => x.Email == email);
+        }
+
         public async Task<Customer> AddCustomer(Customer customer)
         {
             _context.Customers.Add(customer);
