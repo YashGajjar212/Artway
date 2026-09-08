@@ -35,8 +35,7 @@ namespace Artway.Models
         [Required]
         public DateTime Creation_Date { get; set; }
 
-        [Required]
-        public DateTime Last_Updated { get; set; }
+        public DateTime? Last_Updated { get; set; }
 
         public DateTime? Last_Login { get; set; }
     }

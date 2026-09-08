@@ -1,11 +1,14 @@
 using Artway.Application.Interfaces.Authentication;
 using Artway.Application.Interfaces.Customers;
+using Artway.Application.Services.Authentication;
 using Artway.Application.Services.Customers;
 using Artway.Database.DBContext;
 using Artway.Infrastructure.Repositories.Customers;
+using Artway.Models;
 using Artway.Presentation.ExceptionHandlers;
 using Artway.Presentation.Middlewares;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
@@ -83,6 +86,7 @@ try
     builder.Services.AddScoped<ICustomerServices, CustomerServices>();
     builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
     builder.Services.AddScoped<IAuthService, AuthService>();
+    builder.Services.AddSingleton<IPasswordHasher<Customer>, PasswordHasher<Customer>>();
 
     builder.Services.AddDbContext<ArtwayContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("ArtwayDatabase")));

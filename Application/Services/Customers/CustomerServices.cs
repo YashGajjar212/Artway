@@ -22,6 +22,11 @@ namespace Artway.Application.Services.Customers
             return await _customerRepository.GetCustomerById(id);
         }
 
+        public async Task<Customer> GetCustomerByEmail(string email)
+        {
+            return await _customerRepository.GetCustomerByEmail(email);
+        }
+
         public async Task<Customer> AddCustomer(Customer customer)
         {
             var newCustomer = await _customerRepository.AddCustomer(customer);
@@ -47,8 +52,8 @@ namespace Artway.Application.Services.Customers
             existingCustomer.PasswordHash = customer.PasswordHash;
             existingCustomer.UserRole = customer.UserRole;
             existingCustomer.Creation_Date = customer.Creation_Date;
-            existingCustomer.Last_Updated = DateTime.UtcNow;
-            existingCustomer.Last_Login = customer.Last_Login;
+            //existingCustomer.Last_Updated = DateTime.UtcNow;
+            //existingCustomer.Last_Login = customer.Last_Login;
 
             await _customerRepository.UpdateCustomer(existingCustomer);
             return existingCustomer;
