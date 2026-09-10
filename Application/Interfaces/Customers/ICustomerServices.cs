@@ -1,18 +1,19 @@
-﻿using Artway.Models;
+﻿using Artway.DTOs.Customers;
+using Artway.Models.Customers;
 
 namespace Artway.Application.Interfaces.Customers
 {
     public interface ICustomerServices
     {
-        public Task<List<Customer>> GetAllCustomers();
+        public Task<List<CustomerDto>> GetAllCustomers();
 
-        public Task<Customer> GetCustomerById(int id);
+        public Task<CustomerDto> GetCustomerById(int id);
         
-        public Task<Customer> GetCustomerByEmail(string email);
+        public Task<CustomerDto> GetCustomerByEmail(string email);
 
-        public Task<Customer> AddCustomer(Customer customer);
+        public Task<CustomerDto> AddCustomer(CustomerDto customer);
 
-        public Task<Customer> UpdateCustomer(Customer customer);
+        public Task<CustomerDto> UpdateCustomer(CustomerDto customer);
 
         public Task DeleteCustomer(int id);
     }
