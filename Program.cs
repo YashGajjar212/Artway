@@ -1,10 +1,11 @@
 using Artway.Application.Interfaces.Authentication;
 using Artway.Application.Interfaces.Customers;
+using Artway.Application.Mappings;
 using Artway.Application.Services.Authentication;
 using Artway.Application.Services.Customers;
 using Artway.Database.DBContext;
 using Artway.Infrastructure.Repositories.Customers;
-using Artway.Models;
+using Artway.Models.Customers;
 using Artway.Presentation.ExceptionHandlers;
 using Artway.Presentation.Middlewares;
 using Microsoft.AspNetCore.Authentication;
@@ -90,6 +91,8 @@ try
 
     builder.Services.AddDbContext<ArtwayContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("ArtwayDatabase")));
+
+    builder.Services.AddAutoMapper(cfg => { }, typeof(AuthMappingProfile).Assembly);
 
     builder.Services.AddControllers();
 

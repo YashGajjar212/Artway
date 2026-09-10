@@ -1,4 +1,4 @@
-﻿using Artway.Models;
+﻿using Artway.Models.Customers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Artway.Database.DBContext

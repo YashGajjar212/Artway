@@ -1,4 +1,4 @@
-﻿using Artway.Models;
+﻿using Artway.Models.Customers;
 
 namespace Artway.Application.Interfaces.Customers
 {

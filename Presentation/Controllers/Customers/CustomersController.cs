@@ -1,7 +1,8 @@
 ﻿using Artway.Application.Interfaces.Customers;
-using Artway.Models;
 using Microsoft.AspNetCore.Mvc;
 using Artway.Application.Exceptions;
+using Artway.Models.Customers;
+using Artway.DTOs.Customers;
 
 namespace Artway.Presentation.Controllers.Customers
 {
@@ -17,7 +18,7 @@ namespace Artway.Presentation.Controllers.Customers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Customer>>> GetAllCustomers()
+        public async Task<ActionResult<List<CustomerDto>>> GetAllCustomers()
         {
             var result = await _customerServices.GetAllCustomers();
 
@@ -29,7 +30,7 @@ namespace Artway.Presentation.Controllers.Customers
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<ActionResult<Customer>> GetCustomerById(int id)
+        public async Task<ActionResult<CustomerDto>> GetCustomerById(int id)
         {
             var result = await _customerServices.GetCustomerById(id);
 
@@ -41,7 +42,7 @@ namespace Artway.Presentation.Controllers.Customers
 
         [HttpPost]
         // [Route("add")] This is not needed as per REST design. 
-        public async Task<ActionResult<Customer>> AddCustomer([FromBody]Customer customer)
+        public async Task<ActionResult<CustomerDto>> AddCustomer([FromBody] CustomerDto customer)
         {
             var newCustomer = await _customerServices.AddCustomer(customer);
 
@@ -55,7 +56,7 @@ namespace Artway.Presentation.Controllers.Customers
 
         [HttpPut]
         //[Route("update")] Onve again this is not needed as the URL will become api/customers/update and this is not the standard
-        public async Task<ActionResult<Customer>> UpdateCustomer([FromBody]Customer customer)
+        public async Task<ActionResult<CustomerDto>> UpdateCustomer([FromBody] CustomerDto customer)
         {
             var updatedCustomer = await _customerServices.UpdateCustomer(customer);
 
