@@ -1,13 +1,15 @@
-﻿using Artway.Application.Interfaces.Customers;
-using Microsoft.AspNetCore.Mvc;
-using Artway.Application.Exceptions;
-using Artway.Models.Customers;
+﻿using Artway.Application.Exceptions;
+using Artway.Application.Interfaces.Customers;
 using Artway.DTOs.Customers;
+using Artway.Models.Customers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Artway.Presentation.Controllers.Customers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class CustomersController : ControllerBase
     {
         private readonly ICustomerServices _customerServices;
