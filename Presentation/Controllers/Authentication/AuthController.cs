@@ -1,7 +1,10 @@
 ﻿using Artway.Application.Interfaces.Authentication;
+using Artway.Application.Interfaces.Token;
 using Artway.DTOs.Auth;
 using Artway.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Artway.Presentation.Controllers.Authentication
 {
@@ -11,9 +14,12 @@ namespace Artway.Presentation.Controllers.Authentication
     {
         private readonly IAuthService _authService;
 
-        public AuthController(IAuthService authService)
+        private readonly ITokenService _tokenService;
+
+        public AuthController(IAuthService authService, ITokenService tokenService)
         {
             _authService = authService;
+            _tokenService = tokenService;
         }
 
         [HttpPost("register")]
@@ -24,10 +30,20 @@ namespace Artway.Presentation.Controllers.Authentication
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<ActionResult<LoginResponseDto>> Login(LoginRequestDto loginRequest)
         {
             var result = await _authService.Login(loginRequest);
-            return Ok(result);
+            var token = _tokenService.GenerateToken(loginRequest.Email);
+
+            var response = new LoginResponseDto
+            {
+                Email = loginRequest.Email,
+                ExpiresAt = DateTime.UtcNow.AddMinutes(20),
+                Token = token
+            };
+
+            return Ok(response);
         }
     }
 }
