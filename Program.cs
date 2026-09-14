@@ -13,27 +13,19 @@ using Artway.Presentation.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Events;
 using System.Text;
 
-Log.Logger = new LoggerConfiguration()
+try
+{
+    Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
     .MinimumLevel.Override("Microsoft.AspNetCore.Hosting.Diagnostics", LogEventLevel.Information) // Required for request logs
     .MinimumLevel.Override("Microsoft.AspNetCore.Routing", LogEventLevel.Information)             // Required for endpoint matching
     .Enrich.FromLogContext()
-
-    // Will catch all the general things
-    //.Filter.ByExcluding(evt =>
-    //    evt.Exception != null ||
-    //    (evt.Properties.ContainsKey("SourceContext") && (
-    //        evt.Properties["SourceContext"].ToString().Contains("Serilog.AspNetCore.RequestLoggingMiddleware") ||
-    //        evt.Properties["SourceContext"].ToString().Contains("Microsoft.EntityFrameworkCore.Database.Command")
-    //    ))
-    //)
     .WriteTo.File(@"D:\ArtwayLogs\Generic_Logs\Artway-generic-log-.txt",
     outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] [{CorrelationId}] {Message:lj}{NewLine}{Exception}",
         rollingInterval: RollingInterval.Day,
@@ -77,9 +69,11 @@ Log.Logger = new LoggerConfiguration()
         retainedFileCountLimit: 30))
     .CreateLogger();
 
-try
-{
+
     Log.Information("Starting Artway Application. Let it rip");
+    // Create a WebApplicationBuilder object that has two primary jobs
+    //  1) Provide app level configuration for all the services like DI, logging, exception handling, etc
+    //  2) Provide runtime environment for the application
     var builder = WebApplication.CreateBuilder(args);
     builder.Host.UseSerilog();
 
@@ -103,24 +97,38 @@ try
     builder.Services.AddControllers();
 
     // JWT Configuration
+    // Fetch Jwt_Auth and Secret_Key sections from appSettings.json. Convert secret key to byte array because
+    // cryptographic algorithm requires byte array to do its calculations and operations. It can't do it on string
     var jwtSettings = builder.Configuration.GetSection("Jwt_Auth");
     var secretKey = Encoding.UTF8.GetBytes(jwtSettings["Secret_Key"] ?? throw new InvalidOperationException("JWT Key not found"));
 
     builder.Services.AddAuthentication(options =>
     {
+        // By default ASp.NET Core selects Cookie Authentication and so we are saying it to use JWT Authentication
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        // Because it selects Cookie-based Authentication, there the default response is to redirect to login page
+        // if there is an authorization error. But in JWT web api we want to pass a clean 401 Unauthorized status code
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     })
         .AddJwtBearer(options =>
         {
             options.TokenValidationParameters = new TokenValidationParameters
             {
+                // This is a ON/OFF switch and here we are just telling the framework to validate these 3 things.
+                // Actual validation will be done in the ValidIssuer and ValidAudience
                 ValidateIssuer = true,
                 ValidateAudience = true,
                 ValidateLifetime = true,
+                // ValidateIssuerSigningKey ensures the when we receive the token on subsequent requests we validate 
+                // re-calcualte the header+payload and compare the signature with the one that is passed in the token.
+                // If they match then the request is valid, and if not then the request is tampared by a bad actor
                 ValidateIssuerSigningKey = true,
+                // Ensure the Issuer and Audience are the same that we configured in the appSettings. Otherwise anyone can
+                // create pass any value
                 ValidIssuer = jwtSettings["Issuer"],
                 ValidAudience = jwtSettings["Audience"],
+                // To compare the new signature and the signature passed int he token we need to pass the
+                // secret key(byte array) so it can do the validation
                 IssuerSigningKey = new SymmetricSecurityKey(secretKey)
             };
         });
@@ -157,6 +165,8 @@ try
     });
     });
 
+    // Above this was all configuration. After the builder.Build(), we can't configure anything to ensure
+    // thread-safety. After this we chain the middleware elements in proper order and build the application
     var app = builder.Build();
 
     app.UseMiddleware<CorrelationIdMiddleware>();
@@ -175,6 +185,8 @@ try
     app.UseAuthorization();
     app.MapControllers();
 
+    // Starts the application on the Kestrel web server. This blocks the main thread and tells the
+    // app to listen for incoming HTTP requests until it is shut down.
     app.Run();
 }
 catch (Exception ex)
