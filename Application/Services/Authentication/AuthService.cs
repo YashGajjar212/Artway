@@ -1,9 +1,9 @@
 ﻿using Artway.Application.Exceptions;
 using Artway.Application.Interfaces.Authentication;
 using Artway.Application.Interfaces.Customers;
+using Artway.Application.Interfaces.Token;
 using Artway.DTOs.Auth;
 using Artway.DTOs.Customers;
-using Artway.Models.Auth;
 using Artway.Models.Customers;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
@@ -19,13 +19,33 @@ namespace Artway.Application.Services.Authentication
 
         private readonly IPasswordHasher<Customer> _passwordHasher;
 
-        public AuthService(IPasswordHasher<Customer> passwordHasher, ICustomerServices customerServices, IMapper mapper
+        private readonly ITokenService _tokenService;
+
+        public AuthService(IPasswordHasher<Customer> passwordHasher, 
+            ICustomerServices customerServices, 
+            IMapper mapper,
+            ITokenService tokenService
             ) // IAuthRepository authRepository, 
         {
             //_authRepository = authRepository;
             _passwordHasher = passwordHasher;
             _customerServices = customerServices;
             _mapper = mapper;
+            _tokenService = tokenService;
+        }
+
+        public AuthTokenDto GetJWTToken()
+        {
+            var result = _tokenService.GenerateToken("dummyEmail");
+
+            AuthTokenDto response = new AuthTokenDto();
+            response.Issuer = "Artway_App";
+            response.Token = result;
+            response.TokenType = "jwt";
+            response.ExpireyInSeconds = 20;
+            response.ExpiresAt = DateTime.Now.AddMinutes(20);
+
+            return response;
         }
 
         public async Task<RegisterResponseDto> RegisterCustomer(RegisterRequestDto registerRequestDto)
@@ -46,9 +66,12 @@ namespace Artway.Application.Services.Authentication
             if (result == null)
                 throw new Exception($"Unable to add new customer with email: {newCustomer.Email}");
 
+            var token = _tokenService.GenerateToken(newCustomer.Email);
+
             RegisterResponseDto registerResponseDto = new RegisterResponseDto();
             registerResponseDto.CustomerId = result.CustomerId;
             registerResponseDto.Email = result.Email;
+            registerResponseDto.Token = token;
 
             return registerResponseDto;
         }
@@ -67,10 +90,12 @@ namespace Artway.Application.Services.Authentication
             if (result == PasswordVerificationResult.Failed)
                 throw new UnauthorizedException($"Invalid email or password.");
 
+            var token = _tokenService.GenerateToken(loginRequestDto.Email);
+
             LoginResponseDto response = new LoginResponseDto();
             response.Email = loginRequestDto.Email;
-            response.ExpiresAt = DateTime.UtcNow.AddMinutes(10);
-            response.Token = null;
+            response.ExpiresAt = DateTime.UtcNow.AddMinutes(20);
+            response.Token = token;
 
             return response;
         }
