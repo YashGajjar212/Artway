@@ -6,8 +6,8 @@ using Artway.Application.Services.Authentication;
 using Artway.Application.Services.Customers;
 using Artway.Application.Services.Token;
 using Artway.Database.DBContext;
+using Artway.Infrastructure.Models.Customers;
 using Artway.Infrastructure.Repositories.Customers;
-using Artway.Models.Customers;
 using Artway.Presentation.ExceptionHandlers;
 using Artway.Presentation.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -84,10 +84,10 @@ try
 
     // Add services to the container.
     builder.Services.AddScoped<ITokenService, TokenService>();
-    builder.Services.AddScoped<ICustomerServices, CustomerServices>();
-    builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+    builder.Services.AddScoped<IAccountServices, AccountServices>();
+    builder.Services.AddScoped<IAccountRepository, AccountRepository>();
     builder.Services.AddScoped<IAuthService, AuthService>();
-    builder.Services.AddSingleton<IPasswordHasher<Customer>, PasswordHasher<Customer>>();
+    builder.Services.AddSingleton<IPasswordHasher<Account>, PasswordHasher<Account>>();
 
     builder.Services.AddDbContext<ArtwayContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("ArtwayDatabase")));

@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Artway.DTOs.Auth
+namespace Artway.Presentation.DTOs.Auth
 {
     public class LoginRequestDto
     {

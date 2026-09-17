@@ -1,6 +1,6 @@
 ﻿using Artway.Application.Interfaces.Authentication;
 using Artway.Application.Interfaces.Token;
-using Artway.DTOs.Auth;
+using Artway.Presentation.DTOs.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,7 +32,7 @@ namespace Artway.Presentation.Controllers.Authentication
         [HttpPost("register")]
         public async Task<ActionResult<RegisterResponseDto>> RegisterCustomer(RegisterRequestDto registerRequestDto)
         {
-            var result = await _authService.RegisterCustomer(registerRequestDto);
+            var result = await _authService.RegisterAccount(registerRequestDto);
             return Ok(result);
         }
 

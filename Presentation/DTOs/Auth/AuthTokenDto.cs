@@ -1,4 +1,4 @@
-﻿namespace Artway.DTOs.Auth
+﻿namespace Artway.Presentation.DTOs.Auth
 {
     public class AuthTokenDto
     {

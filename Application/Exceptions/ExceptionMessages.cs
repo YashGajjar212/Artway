@@ -4,9 +4,9 @@
     {
         public static string NoRecordFound = "No record found";
 
-        // All Exception messages regarding Customers
-        public static string CustomerNotFoundwithId(int id) => $"No customer was found with Id: {id}";
-        public const string CustomerNotFound = "Customer not found";
-        public const string CustomerInsertException = "An exception occurred while adding new customer";
+        // All Exception messages regarding Accounts
+        public static string AccountNotFoundwithId(int id) => $"No account was found with Id: {id}";
+        public const string AccountNotFound = "Account not found";
+        public const string AccountInsertException = "An exception occurred while adding new account";
     }
 }

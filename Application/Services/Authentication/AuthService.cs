@@ -2,9 +2,9 @@
 using Artway.Application.Interfaces.Authentication;
 using Artway.Application.Interfaces.Customers;
 using Artway.Application.Interfaces.Token;
-using Artway.DTOs.Auth;
-using Artway.DTOs.Customers;
-using Artway.Models.Customers;
+using Artway.Infrastructure.Models.Customers;
+using Artway.Presentation.DTOs.Auth;
+using Artway.Presentation.DTOs.Customers;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 
@@ -13,23 +13,23 @@ namespace Artway.Application.Services.Authentication
     public class AuthService : IAuthService
     {
         //private readonly IAuthRepository _authRepository;
-        private readonly ICustomerServices _customerServices;
+        private readonly IAccountServices _accountServices;
 
         private readonly IMapper _mapper;
 
-        private readonly IPasswordHasher<Customer> _passwordHasher;
+        private readonly IPasswordHasher<Account> _passwordHasher;
 
         private readonly ITokenService _tokenService;
 
-        public AuthService(IPasswordHasher<Customer> passwordHasher, 
-            ICustomerServices customerServices, 
+        public AuthService(IPasswordHasher<Account> passwordHasher,
+            IAccountServices accountServices, 
             IMapper mapper,
             ITokenService tokenService
             ) // IAuthRepository authRepository, 
         {
             //_authRepository = authRepository;
             _passwordHasher = passwordHasher;
-            _customerServices = customerServices;
+            _accountServices = accountServices;
             _mapper = mapper;
             _tokenService = tokenService;
         }
@@ -48,28 +48,28 @@ namespace Artway.Application.Services.Authentication
             return response;
         }
 
-        public async Task<RegisterResponseDto> RegisterCustomer(RegisterRequestDto registerRequestDto)
+        public async Task<RegisterResponseDto> RegisterAccount(RegisterRequestDto registerRequestDto)
         {
-            var existingCustomer = await _customerServices.GetCustomerByEmail(registerRequestDto.Email);
+            var existingAccount = await _accountServices.GetAccountByEmail(registerRequestDto.Email);
 
-            if (existingCustomer != null)
-                throw new Exception($"Customer already exists with email: {registerRequestDto.Email}");
+            if (existingAccount != null)
+                throw new Exception("Account already exists");
 
-            Customer newCustomer = new Customer();
-            newCustomer.Email = registerRequestDto.Email;
-            newCustomer.PasswordHash = _passwordHasher.HashPassword(newCustomer, registerRequestDto.Password);
+            Account newAccount = new Account();
+            newAccount.Email = registerRequestDto.Email;
+            newAccount.PasswordHash = _passwordHasher.HashPassword(newAccount, registerRequestDto.Password);
 
-            var mapCustomer = _mapper.Map<CustomerDto>(newCustomer);
+            var mapAccount = _mapper.Map<AccountDto>(newAccount);
 
-            var result = await _customerServices.AddCustomer(mapCustomer);
+            var result = await _accountServices.AddAccount(mapAccount);
 
             if (result == null)
-                throw new Exception($"Unable to add new customer with email: {newCustomer.Email}");
+                throw new Exception("Unable to add new account");
 
-            var token = _tokenService.GenerateToken(newCustomer.Email);
+            var token = _tokenService.GenerateToken(newAccount.Email);
 
             RegisterResponseDto registerResponseDto = new RegisterResponseDto();
-            registerResponseDto.CustomerId = result.CustomerId;
+            registerResponseDto.AccountId = result.AccountId;
             registerResponseDto.Email = result.Email;
             registerResponseDto.Token = token;
 
@@ -78,14 +78,14 @@ namespace Artway.Application.Services.Authentication
 
         public async Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto)
         {
-            var customer = await _customerServices.GetCustomerByEmail(loginRequestDto.Email);
+            var account = await _accountServices.GetAccountByEmail(loginRequestDto.Email);
 
-            if (customer == null)
-                throw new NotFoundException($"Customer does not exist");
+            if (account == null)
+                throw new NotFoundException($"Account does not exist");
 
-            var mapCustomer = _mapper.Map<Customer>(customer);
+            var mapAccount = _mapper.Map<Account>(account);
 
-            var result = _passwordHasher.VerifyHashedPassword(mapCustomer, customer.PasswordHash, loginRequestDto.Password);
+            var result = _passwordHasher.VerifyHashedPassword(mapAccount, account.PasswordHash, loginRequestDto.Password);
 
             if (result == PasswordVerificationResult.Failed)
                 throw new UnauthorizedException($"Invalid email or password.");

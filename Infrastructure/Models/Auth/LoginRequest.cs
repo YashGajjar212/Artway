@@ -1,4 +1,4 @@
-﻿namespace Artway.Models.Auth
+﻿namespace Artway.Infrastructure.Models.Auth
 {
     public class LoginRequest
     {

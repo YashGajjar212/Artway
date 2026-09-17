@@ -1,8 +1,8 @@
-﻿namespace Artway.DTOs.Auth
+﻿namespace Artway.Presentation.DTOs.Auth
 {
     public class RegisterResponseDto
     {
-        public int CustomerId { get; set; }
+        public int AccountId { get; set; }
 
         public string Email { get; set; }
 

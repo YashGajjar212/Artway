@@ -1,4 +1,4 @@
-﻿using Artway.Models.Customers;
+﻿using Artway.Infrastructure.Models.Customers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Artway.Database.DBContext
@@ -10,6 +10,6 @@ namespace Artway.Database.DBContext
 
         }
 
-        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Account> Accounts { get; set; }
     }
 }
