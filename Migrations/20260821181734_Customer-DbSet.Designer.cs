@@ -27,11 +27,11 @@ namespace Artway.Migrations
 
             modelBuilder.Entity("Artway.Models.Customer", b =>
                 {
-                    b.Property<int>("CustomerId")
+                    b.Property<int>("AccountId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AccountId"));
 
                     b.Property<DateTime>("Creation_Date")
                         .HasColumnType("datetime2");
@@ -63,7 +63,7 @@ namespace Artway.Migrations
                     b.Property<int>("UserRole")
                         .HasColumnType("int");
 
-                    b.HasKey("CustomerId");
+                    b.HasKey("AccountId");
 
                     b.ToTable("Customers");
                 });

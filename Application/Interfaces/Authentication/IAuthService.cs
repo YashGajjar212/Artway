@@ -1,4 +1,4 @@
-﻿using Artway.DTOs.Auth;
+﻿using Artway.Presentation.DTOs.Auth;
 
 namespace Artway.Application.Interfaces.Authentication
 {
@@ -6,7 +6,7 @@ namespace Artway.Application.Interfaces.Authentication
     {
         AuthTokenDto GetJWTToken();
 
-        Task<RegisterResponseDto> RegisterCustomer(RegisterRequestDto registerRequestDto);
+        Task<RegisterResponseDto> RegisterAccount(RegisterRequestDto registerRequestDto);
 
         Task<LoginResponseDto> Login(LoginRequestDto loginRequestDto);
     }

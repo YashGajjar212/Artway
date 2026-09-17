@@ -49,7 +49,7 @@ IF NOT EXISTS (
 )
 BEGIN
     CREATE TABLE [Customers] (
-        [CustomerId] int NOT NULL IDENTITY,
+        [AccountId] int NOT NULL IDENTITY,
         [Name] nvarchar(100) NOT NULL,
         [Phone] nvarchar(max) NOT NULL,
         [Email] nvarchar(150) NOT NULL,
@@ -58,7 +58,7 @@ BEGIN
         [Creation_Date] datetime2 NOT NULL,
         [Last_Updated] datetime2 NOT NULL,
         [Last_Login] datetime2 NOT NULL,
-        CONSTRAINT [PK_Customers] PRIMARY KEY ([CustomerId])
+        CONSTRAINT [PK_Customers] PRIMARY KEY ([AccountId])
     );
 END;
 GO

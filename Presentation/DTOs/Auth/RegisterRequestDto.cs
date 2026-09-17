@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Artway.DTOs.Auth
+namespace Artway.Presentation.DTOs.Auth
 {
     public class RegisterRequestDto
     {

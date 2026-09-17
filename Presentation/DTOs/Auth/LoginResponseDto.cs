@@ -1,6 +1,6 @@
-﻿namespace Artway.Models.Auth
+﻿namespace Artway.Presentation.DTOs.Auth
 {
-    public class LoginResponse
+    public class LoginResponseDto
     {
         public string Email { get; set; }
         public DateTime ExpiresAt { get; set; }

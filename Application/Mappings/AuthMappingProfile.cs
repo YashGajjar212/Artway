@@ -1,5 +1,5 @@
-﻿using Artway.DTOs.Auth;
-using Artway.Models.Auth;
+﻿using Artway.Infrastructure.Models.Auth;
+using Artway.Presentation.DTOs.Auth;
 using AutoMapper;
 
 namespace Artway.Application.Mappings

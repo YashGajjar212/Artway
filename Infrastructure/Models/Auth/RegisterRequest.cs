@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Artway.Models.Auth
+namespace Artway.Infrastructure.Models.Auth
 {
     public class RegisterRequest
     {
