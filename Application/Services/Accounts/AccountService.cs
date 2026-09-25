@@ -6,12 +6,12 @@ using AutoMapper;
 
 namespace Artway.Application.Services.Customers
 {
-    public class AccountServices : IAccountServices
+    public class AccountService : IAccountService
     {
         private readonly IAccountRepository _accountRepository;
         private readonly IMapper _mapper;
 
-        public AccountServices(IAccountRepository accountRepository, IMapper mapper)
+        public AccountService(IAccountRepository accountRepository, IMapper mapper)
         {
             _accountRepository = accountRepository;
             _mapper = mapper;
@@ -56,7 +56,7 @@ namespace Artway.Application.Services.Customers
 
             if (existingAccount == null)
             {
-                throw new NotFoundException($"Account not found");
+                throw new NotFoundException("Account not found");
             }
 
             _mapper.Map(account, existingAccount);
@@ -79,7 +79,7 @@ namespace Artway.Application.Services.Customers
             var account = await _accountRepository.GetAccountById(id);
 
             if (account == null)
-                throw new NotFoundException($"Customer with ID {id} was not found.");
+                throw new NotFoundException("Customer not found");
 
             await _accountRepository.DeleteAccount(id);
         }
