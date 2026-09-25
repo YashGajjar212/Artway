@@ -13,7 +13,7 @@ namespace Artway.Application.Services.Authentication
     public class AuthService : IAuthService
     {
         //private readonly IAuthRepository _authRepository;
-        private readonly IAccountServices _accountServices;
+        private readonly IAccountService _accountServices;
 
         private readonly IMapper _mapper;
 
@@ -22,7 +22,7 @@ namespace Artway.Application.Services.Authentication
         private readonly ITokenService _tokenService;
 
         public AuthService(IPasswordHasher<Account> passwordHasher,
-            IAccountServices accountServices, 
+            IAccountService accountServices, 
             IMapper mapper,
             ITokenService tokenService
             ) // IAuthRepository authRepository, 

@@ -2,7 +2,7 @@
 
 namespace Artway.Application.Interfaces.Customers
 {
-    public interface IAccountServices
+    public interface IAccountService
     {
         public Task<List<AccountDto>> GetAllAccounts();
 

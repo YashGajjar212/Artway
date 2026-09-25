@@ -1,7 +1,9 @@
+using Artway.Application.Interfaces.Accounts;
 using Artway.Application.Interfaces.Authentication;
 using Artway.Application.Interfaces.Customers;
 using Artway.Application.Interfaces.Token;
 using Artway.Application.Mappings;
+using Artway.Application.Services.Accounts;
 using Artway.Application.Services.Authentication;
 using Artway.Application.Services.Customers;
 using Artway.Application.Services.Token;
@@ -84,8 +86,10 @@ try
 
     // Add services to the container.
     builder.Services.AddScoped<ITokenService, TokenService>();
-    builder.Services.AddScoped<IAccountServices, AccountServices>();
+    builder.Services.AddScoped<IAccountService, AccountService>();
     builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+    builder.Services.AddScoped<IArtistService, ArtistService>();
+    //builder.Services
     builder.Services.AddScoped<IAuthService, AuthService>();
     builder.Services.AddSingleton<IPasswordHasher<Account>, PasswordHasher<Account>>();
 

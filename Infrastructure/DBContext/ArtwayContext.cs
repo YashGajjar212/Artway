@@ -11,5 +11,6 @@ namespace Artway.Database.DBContext
         }
 
         public DbSet<Account> Accounts { get; set; }
+        public DbSet<Artist> Artists { get; set; }
     }
 }

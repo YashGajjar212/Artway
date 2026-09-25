@@ -1,8 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Artway.Infrastructure.Models.Customers
 {
+    [Index(nameof(DisplayName), IsUnique = true)]
     public class Artist
     {
         [Key]

@@ -13,14 +13,14 @@ namespace Artway.Presentation.Controllers.Customers
     [Authorize]
     public class AccountController : ControllerBase
     {
-        private readonly IAccountServices _accountServices;
+        private readonly IAccountService _accountServices;
 
-        public AccountController(IAccountServices accountServices)
+        public AccountController(IAccountService accountServices)
         {
             _accountServices = accountServices;
         }
 
-        [HttpGet]
+        [HttpGet("/api/accounts")]
         public async Task<ActionResult<List<AccountDto>>> GetAllAccounts()
         {
             var result = await _accountServices.GetAllAccounts();
@@ -66,7 +66,7 @@ namespace Artway.Presentation.Controllers.Customers
             return Ok(updatedAccount);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("/api/accounts/{id}")]
         public async Task<IActionResult> DeleteAccount(int id)
         {
             await _accountServices.DeleteAccount(id);

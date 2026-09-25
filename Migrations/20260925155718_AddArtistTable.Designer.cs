@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Artway.Migrations
 {
     [DbContext(typeof(ArtwayContext))]
-    [Migration("20260821181734_Customer-DbSet")]
-    partial class CustomerDbSet
+    [Migration("20260925155718_AddArtistTable")]
+    partial class AddArtistTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace Artway.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Artway.Models.Customer", b =>
+            modelBuilder.Entity("Artway.Infrastructure.Models.Customers.Account", b =>
                 {
                     b.Property<int>("AccountId")
                         .ValueGeneratedOnAdd()
@@ -41,14 +41,13 @@ namespace Artway.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
-                    b.Property<DateTime>("Last_Login")
+                    b.Property<DateTime?>("Last_Login")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("Last_Updated")
+                    b.Property<DateTime?>("Last_Updated")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -57,7 +56,6 @@ namespace Artway.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UserRole")
@@ -65,7 +63,54 @@ namespace Artway.Migrations
 
                     b.HasKey("AccountId");
 
-                    b.ToTable("Customers");
+                    b.ToTable("Accounts");
+                });
+
+            modelBuilder.Entity("Artway.Infrastructure.Models.Customers.Artist", b =>
+                {
+                    b.Property<int>("ArtistId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ArtistId"));
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Bio")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("Last_login")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("ArtistId");
+
+                    b.HasIndex("AccountId");
+
+                    b.ToTable("Artists");
+                });
+
+            modelBuilder.Entity("Artway.Infrastructure.Models.Customers.Artist", b =>
+                {
+                    b.HasOne("Artway.Infrastructure.Models.Customers.Account", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
                 });
 #pragma warning restore 612, 618
         }
